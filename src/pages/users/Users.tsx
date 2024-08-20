@@ -24,9 +24,13 @@ const Users: React.FC = () => {
   const [newUser, setNewUser] = useState({
     firstName: "",
     lastName: "",
+    email: "",
+    username: "",
+    password: "",
     phone: "",
   });
 
+  const [openModal, setOpenModal] = useState(false);
   const [editUser, setEditUser] = useState<{ id: string } | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -43,12 +47,16 @@ const Users: React.FC = () => {
       addUser(newUser);
     }
     resetUserForm();
+    setOpenModal(false);
   };
 
   const resetUserForm = () => {
     setNewUser({
       firstName: "",
       lastName: "",
+      email: "",
+      username: "",
+      password: "",
       phone: "",
     });
     setEditUser(null);
@@ -71,7 +79,7 @@ const Users: React.FC = () => {
   const paginatedUsers = users.slice(startIndex, endIndex);
 
   return (
-    <div style={{ height: "100vh", padding: "20px", overflowY: "auto" }}>
+    <div style={{ padding: "20px", overflowY: "auto" }}>
       <h2>Users</h2>
       {loading && <h2>Loading...</h2>}
       {error && <h2>{error}</h2>}
@@ -83,6 +91,8 @@ const Users: React.FC = () => {
               <TableCell>№</TableCell>
               <TableCell>First Name</TableCell>
               <TableCell>Last Name</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Username</TableCell>
               <TableCell>Phone</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -93,13 +103,26 @@ const Users: React.FC = () => {
                 <TableCell>{startIndex + index + 1}</TableCell>
                 <TableCell>{user.firstName}</TableCell>
                 <TableCell>{user.lastName}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.username}</TableCell>
                 <TableCell>{user.phone}</TableCell>
                 <TableCell>
                   <div style={{ display: "flex", gap: "10px" }}>
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={() => setEditUser({ id: user.id })}
+                      onClick={() => {
+                        setEditUser({ id: user.id });
+                        setNewUser({
+                          firstName: user.firstName,
+                          lastName: user.lastName,
+                          email: user.email,
+                          username: user.username,
+                          password: user.password,
+                          phone: user.phone,
+                        });
+                        setOpenModal(true);
+                      }}
                     >
                       Edit
                     </Button>
@@ -114,55 +137,18 @@ const Users: React.FC = () => {
                 </TableCell>
               </TableRow>
             ))}
-
-            {/* Add form on the last row */}
-            {paginatedUsers.length === rowsPerPage && (
-              <TableRow>
-                <TableCell>-</TableCell>
-                <TableCell>
-                  <TextField
-                    placeholder="First Name"
-                    value={newUser.firstName}
-                    onChange={(e) =>
-                      setNewUser({ ...newUser, firstName: e.target.value })
-                    }
-                  />
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    placeholder="Last Name"
-                    value={newUser.lastName}
-                    onChange={(e) =>
-                      setNewUser({ ...newUser, lastName: e.target.value })
-                    }
-                  />
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    placeholder="Phone"
-                    value={newUser.phone}
-                    onChange={(e) =>
-                      setNewUser({ ...newUser, phone: e.target.value })
-                    }
-                  />
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    onClick={handleAddOrUpdateUser}
-                    disabled={
-                      !(newUser.firstName && newUser.lastName && newUser.phone)
-                    }
-                  >
-                    Add
-                  </Button>
-                </TableCell>
-              </TableRow>
-            )}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Button
+        variant="contained"
+        color="primary"
+        style={{ marginTop: "20px" }}
+        onClick={() => setOpenModal(true)}
+      >
+        Add User
+      </Button>
 
       <Pagination
         count={Math.ceil(users.length / rowsPerPage)}
@@ -170,6 +156,85 @@ const Users: React.FC = () => {
         onChange={handlePageChange}
         style={{ marginTop: "20px" }}
       />
+
+      {/* Add/Edit User Modal */}
+      <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+        <DialogTitle>{editUser ? "Edit User" : "Add New User"}</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="First Name"
+            value={newUser.firstName}
+            onChange={(e) =>
+              setNewUser({ ...newUser, firstName: e.target.value })
+            }
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Last Name"
+            value={newUser.lastName}
+            onChange={(e) =>
+              setNewUser({ ...newUser, lastName: e.target.value })
+            }
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Email"
+            value={newUser.email}
+            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Username"
+            value={newUser.username}
+            onChange={(e) =>
+              setNewUser({ ...newUser, username: e.target.value })
+            }
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Password"
+            value={newUser.password}
+            onChange={(e) =>
+              setNewUser({ ...newUser, password: e.target.value })
+            }
+            type="password"
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Phone"
+            value={newUser.phone}
+            onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
+            fullWidth
+            margin="dense"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenModal(false)} color="secondary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleAddOrUpdateUser}
+            color="primary"
+            disabled={
+              !(
+                newUser.firstName &&
+                newUser.lastName &&
+                newUser.email &&
+                newUser.username &&
+                newUser.password &&
+                newUser.phone
+              )
+            }
+          >
+            {editUser ? "Update User" : "Add User"}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {deleteConfirm && (
         <Dialog open={true} onClose={() => setDeleteConfirm(null)}>

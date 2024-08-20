@@ -26,7 +26,7 @@ const LayoutComponent: React.FC = () => {
   );
 
   return (
-    <Layout className="h-[100vh]">
+    <Layout className="min-h-screen">
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <Link to="/" className="flex items-center justify-center">
           <h1 className={`${collapsed ? "text-xl" : "text-3xl"} text-white`}>
@@ -67,6 +67,7 @@ const LayoutComponent: React.FC = () => {
             padding: 24,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
+            minHeight: "calc(100vh - 112px)", // Header and margin are considered
           }}
         >
           <Outlet />

@@ -65,17 +65,10 @@ const Products: React.FC = () => {
   const handleAddOrUpdateProduct = () => {
     if (editProduct) {
       // Update existing product
-      if (editProduct.id) {
-        updateProduct(editProduct.id, { ...newProduct });
-      }
+      updateProduct(editProduct.id, { ...newProduct });
       setEditProduct(null);
     } else {
-      const newId = (
-        products.length
-          ? Math.max(...products.map((p) => parseInt(p.id))) + 1
-          : 1
-      ).toString();
-      addProduct({ ...newProduct, id: newId });
+      addProduct(newProduct); // ID avtomatik tarzda beriladi
     }
     resetProductForm();
   };
@@ -120,7 +113,7 @@ const Products: React.FC = () => {
   };
 
   return (
-    <div style={{ height: "100vh", padding: "20px", overflowY: "auto" }}>
+    <div style={{ padding: "20px", overflowY: "auto" }}>
       <h2>Products</h2>
       {loading && <h2>Loading...</h2>}
       {error && <h2>{error}</h2>}
@@ -250,11 +243,7 @@ const Products: React.FC = () => {
             ))}
             {editProduct === null && (
               <TableRow>
-                <TableCell>
-                  {products.length
-                    ? Math.max(...products.map((p) => parseInt(p.id))) + 1
-                    : 1}
-                </TableCell>
+                <TableCell>{products.length + 1}</TableCell>
                 <TableCell>
                   <TextField
                     value={newProduct.title}

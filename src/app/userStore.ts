@@ -5,6 +5,9 @@ interface User {
   id: string;
   firstName: string;
   lastName: string;
+  email: string; // Qo'shildi
+  username: string; // Qo'shildi
+  password: string; // Qo'shildi
   phone: string;
 }
 
