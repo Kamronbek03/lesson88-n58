@@ -31,7 +31,7 @@ export const useProductStore = create<ProductState>((set) => ({
   fetchProducts: async () => {
     set({ loading: true });
     try {
-      const res = await axios.get("http://localhost:3000/products");
+      const res = await axios.get("http://localhost:3000/api/products"); // URL yangilangan
       set({ loading: false, products: res.data, error: "" });
     } catch (err) {
       set({ loading: false, products: [], error: (err as Error).message });
@@ -40,7 +40,7 @@ export const useProductStore = create<ProductState>((set) => ({
   addProduct: async (newProduct) => {
     try {
       const { data: products } = await axios.get(
-        "http://localhost:3000/products"
+        "http://localhost:3000/api/products" // URL yangilangan
       );
       const highestId = Math.max(
         ...products.map((p: Product) => parseInt(p.id, 10))
@@ -59,7 +59,7 @@ export const useProductStore = create<ProductState>((set) => ({
       };
 
       const res = await axios.post(
-        "http://localhost:3000/products",
+        "http://localhost:3000/api/products", // URL yangilangan
         completeProduct
       );
       set((state) => ({
@@ -72,7 +72,7 @@ export const useProductStore = create<ProductState>((set) => ({
   updateProduct: async (id, updatedProduct) => {
     try {
       const res = await axios.patch(
-        `http://localhost:3000/products/${id}`,
+        `http://localhost:3000/api/products/${id}`, // URL yangilangan
         updatedProduct
       );
       set((state) => ({
@@ -86,7 +86,7 @@ export const useProductStore = create<ProductState>((set) => ({
   },
   deleteProduct: async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/products/${id}`);
+      await axios.delete(`http://localhost:3000/api/products/${id}`); // URL yangilangan
       set((state) => ({
         products: state.products.filter((product) => product.id !== id),
       }));

@@ -5,9 +5,9 @@ interface User {
   id: string;
   firstName: string;
   lastName: string;
-  email: string; // Qo'shildi
-  username: string; // Qo'shildi
-  password: string; // Qo'shildi
+  email: string;
+  username: string;
+  password: string;
   phone: string;
 }
 
@@ -28,7 +28,7 @@ export const useUserStore = create<UserState>((set) => ({
   fetchUsers: async () => {
     set({ loading: true });
     try {
-      const res = await axios.get("http://localhost:3000/users");
+      const res = await axios.get("http://localhost:3000/api/users"); // URL yangilangan
       set({ loading: false, users: res.data, error: "" });
     } catch (err) {
       set({ loading: false, users: [], error: (err as Error).message });
@@ -40,7 +40,10 @@ export const useUserStore = create<UserState>((set) => ({
         ...newUser,
         id: Math.random().toString(36).substr(2, 9), // Tasodifiy ID yaratish
       };
-      const res = await axios.post("http://localhost:3000/users", completeUser);
+      const res = await axios.post(
+        "http://localhost:3000/api/users",
+        completeUser
+      ); // URL yangilangan
       set((state) => ({
         users: [...state.users, res.data],
       }));
@@ -51,7 +54,7 @@ export const useUserStore = create<UserState>((set) => ({
   updateUser: async (id, updatedUser) => {
     try {
       const res = await axios.patch(
-        `http://localhost:3000/users/${id}`,
+        `http://localhost:3000/api/users/${id}`,
         updatedUser
       );
       set((state) => ({
@@ -63,7 +66,7 @@ export const useUserStore = create<UserState>((set) => ({
   },
   deleteUser: async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/users/${id}`);
+      await axios.delete(`http://localhost:3000/api/users/${id}`);
       set((state) => ({
         users: state.users.filter((user) => user.id !== id),
       }));
